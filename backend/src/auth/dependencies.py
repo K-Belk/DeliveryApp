@@ -5,7 +5,7 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.database import async_session
-from src.auth.services import get_user
+from src.auth.services import get_user_by_username
 from src.auth.schemas import UserResponse as User
 from src.auth.constants import SECRET_KEY, ALGORITHM
 
@@ -46,7 +46,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: AsyncSession
             raise credentials_exception
     except JWTError:
         raise credentials_exception
-    user = await get_user(db, username)
+    user = await get_user_by_username(db, username)
     if user is None or not user.is_active:
         raise credentials_exception
     return user
