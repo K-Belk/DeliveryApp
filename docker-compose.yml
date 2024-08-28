@@ -1,7 +1,7 @@
 version: '3.9'
 
 services:
-  web:
+  backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -21,9 +21,9 @@ services:
     container_name: delivery_db
     restart: always
     environment:
-      POSTGRES_USER: yourusername
-      POSTGRES_PASSWORD: yourpassword
-      POSTGRES_DB: delivery
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:

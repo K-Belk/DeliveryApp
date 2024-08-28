@@ -11,12 +11,13 @@ from passlib.context import CryptContext
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
 from src.auth.constants import SECRET_KEY, ALGORITHM
+from typing import Optional
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """
-    Verify the password against the hashed password.
+    Verifies if the given plain password matches the stored hashed password.
 
         Args:
             plain_password (str): The plain password.
@@ -29,7 +30,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 def get_password_hash(password: str) -> str:
     """
-    Get the hashed password.
+    Generates a hashed version of the provided password.
 
         Args:
             password (str): The password.
@@ -39,9 +40,9 @@ def get_password_hash(password: str) -> str:
     """
     return pwd_context.hash(password)
 
-def create_access_token(data: dict, expires_delta: timedelta = None) -> str:
+def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
     """
-    Create an access token.
+    Creates a JWT access token with a payload and optional expiration.
 
         Args:
             data (dict): The data to encode.
