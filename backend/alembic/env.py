@@ -1,8 +1,8 @@
 import asyncio
-from logging.config import fileConfig
+# from logging.config import fileConfig
 from sqlalchemy import pool
-from sqlalchemy.engine import Connection
-from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
+# from sqlalchemy.engine import Connection
+from sqlalchemy.ext.asyncio import create_async_engine#, AsyncEngine
 from alembic import context
 from dotenv import load_dotenv
 import os
@@ -12,14 +12,14 @@ import sys
 load_dotenv()
 
 # Load the database URL from the .env file
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = os.getenv("DATABASE_URL_ALEMBIC")
 if not DATABASE_URL:
-    raise ValueError("DATABASE_URL is not set. Please check your .env file.")
+    raise ValueError("DATABASE_URL_ALEMBIC is not set. Please check your .env file.")
 
 # Add the project root directory to the Python path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from src.auth.models import User  # noqa: E402
+from src.auth.models import User  # noqa: E402, F401
 from src.database import Base  # noqa: E402
 
 # This is the Alembic Config object, which provides access to the values within the .ini file in use.

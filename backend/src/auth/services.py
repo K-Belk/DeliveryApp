@@ -9,7 +9,7 @@ from datetime import timedelta
 from src.auth.constants import ACCESS_TOKEN_EXPIRE_MINUTES
 from typing import Optional
 
-async def get_user(db: AsyncSession, username: str) -> Optional[User]:
+async def get_user_by_username(db: AsyncSession, username: str) -> Optional[User]:
     """
     Retrieves a user from the database by username.
 
@@ -20,9 +20,9 @@ async def get_user(db: AsyncSession, username: str) -> Optional[User]:
         Returns:
             User: The user.
     """
-    async with db() as session:
-        result = await session.execute(select(User).filter(User.username == username))
-        return result.scalars().first()
+    
+    result = await db.execute(select(User).filter(User.username == username))
+    return result.scalars().first()
 
 async def get_user_by_email(db: AsyncSession, email: str) -> Optional[User]:
     """
@@ -39,7 +39,21 @@ async def get_user_by_email(db: AsyncSession, email: str) -> Optional[User]:
         result = await session.execute(select(User).filter(User.email == email))
         return result.scalars().first()
 
-async def create_user(db: AsyncSession, user: UserCreate):
+async def get_all_users(db: AsyncSession) -> list[User]:
+    """
+    Retrieves all users from the database.
+
+        Args:
+            db (AsyncSession): The database session.
+
+        Returns:
+            list[User]: A list of users.
+    """
+    
+    result = await db.execute(select(User))
+    return result.scalars().all()
+
+async def create_user(db: AsyncSession, user: UserCreate) -> User:
     """
     Create a new user and stores it in the database.
 
@@ -50,19 +64,17 @@ async def create_user(db: AsyncSession, user: UserCreate):
         Returns:
             User: The created user.
     """
-    async with db() as session:
-        hashed_password = get_password_hash(user.password)
-        new_user = User(
-            username=user.username,
-            email=user.email,
-            hashed_password=hashed_password,
-            first_name=user.first_name,
-            last_name=user.last_name,
-        )
-        session.add(new_user)
-        await session.commit()
-        await session.refresh(new_user)
-        return new_user
+    new_user = User(
+        username=user.username,
+        email=user.email,
+        hashed_password=get_password_hash(user.password),
+        first_name=user.first_name,
+        last_name=user.last_name,
+    )
+    db.add(new_user)
+    await db.commit()
+    await db.refresh(new_user)
+    return new_user
 
 async def authenticate_user(db: AsyncSession, username: str, password: str) -> Optional[User]:
     """
@@ -76,7 +88,7 @@ async def authenticate_user(db: AsyncSession, username: str, password: str) -> O
         Returns:
             User: The authenticated user.
     """
-    user = await get_user(db, username)
+    user = await get_user_by_username(db, username)
     if user and verify_password(password, user.hashed_password):
         return user
     return None

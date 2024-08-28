@@ -5,11 +5,18 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from src.auth.schemas import UserCreate, UserResponse, Token
-from src.auth.services import create_user, login_for_access_token
+from src.auth.services import (
+    create_user,
+    login_for_access_token,
+    get_all_users,
+    get_user_by_username,
+    get_user_by_email,
+)
 from src.auth.dependencies import get_db, get_current_user
 
 # Create a FastAPI router instance for handling authentication routes
 router = APIRouter()
+
 
 @router.post("/register/", response_model=UserResponse)
 async def register(user: UserCreate, db: AsyncSession = Depends(get_db)):
@@ -31,22 +38,25 @@ async def register(user: UserCreate, db: AsyncSession = Depends(get_db)):
         raise HTTPException(status_code=400, detail="User already exists")
     return db_user
 
+
 @router.post("/token/", response_model=Token)
-async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_db)):
+async def login(
+    form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_db)
+):
     """
     # Authenticate user and generate access token.
-    
+
         Parameters:
         - form_data (OAuth2PasswordRequestForm): The form data containing the username and password.
         - db (AsyncSession): The database session.
-        
+
         Returns:
         - str: The access token.
-        
+
         Raises:
         - HTTPException: If the username or password is incorrect.
     """
-    
+
     token = await login_for_access_token(db, form_data.username, form_data.password)
     if not token:
         raise HTTPException(
@@ -56,18 +66,50 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSessi
         )
     return token
 
+
 @router.get("/users/")
-async def get_users(db: AsyncSession = Depends(get_db), current_user: UserResponse = Depends(get_current_user)):
-    result = await db.execute(select(current_user))
-    users = result.scalars().all()
+async def get_users(
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
+):
+    """
+    Get all users.
 
-    return users
+        Parameters:
+        - db (AsyncSession): The database session.
+        - current_user (UserResponse): The current user.
+
+        Returns:
+        - result: The list of all users.
+    """
+    result = await get_all_users(db)
+
+    return result
 
 
-# # Path to get a specific user
-# @router.get("/users/{user_id}")
-# async def get_user(user_id: int):
-#     return {"message": f"User with id {user_id} returned successfully"}
+# Path to get a specific user
+@router.get("/users/{username}")
+async def get_user(
+    username: str,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
+) -> UserResponse:
+    """
+    Get a specific user by username.
+
+        Parameters:
+        - username (str): The username of the user.
+        - db (AsyncSession): The database session.
+        - current_user (UserResponse): The current user.
+
+        Returns:
+        - UserResponse: The user.
+    """
+    user = await get_user_by_username(db, username)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
 
 # # Path to update a user
 # @router.put("/users/{user_id}")
