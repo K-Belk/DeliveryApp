@@ -6,7 +6,6 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 
 # The DATABASE_URL is an environment variable that contains your database connection string
 DATABASE_URL = os.getenv("DATABASE_URL")
-print(DATABASE_URL)
 
 # `create_async_engine` is used to create a SQLAlchemy engine with asynchronous capabilities
 engine = create_async_engine(DATABASE_URL, echo=True)

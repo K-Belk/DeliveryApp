@@ -41,13 +41,13 @@ class UserResponse(UserBase):
             is_active (bool): The status of the user.
     """
 
-    id: int
+    id: int | None = None
     is_active: bool
 
     # The `Config` class provides extra configuration for Pydantic models
     # `orm_mode=True` tells Pydantic to read data even if it is returned as ORM models
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class Token(BaseModel):
     """

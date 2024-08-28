@@ -26,7 +26,7 @@ async def get_user_by_username(db: AsyncSession, username: str) -> Optional[User
 
 async def get_user_by_email(db: AsyncSession, email: str) -> Optional[User]:
     """
-    Retrieves a user from the database by email.
+    # Retrieves a user from the database by email.
 
         Args:
             db (AsyncSession): The database session.
@@ -41,7 +41,7 @@ async def get_user_by_email(db: AsyncSession, email: str) -> Optional[User]:
 
 async def get_all_users(db: AsyncSession) -> list[User]:
     """
-    Retrieves all users from the database.
+    # Retrieves all users from the database.
 
         Args:
             db (AsyncSession): The database session.
@@ -55,7 +55,7 @@ async def get_all_users(db: AsyncSession) -> list[User]:
 
 async def create_user(db: AsyncSession, user: UserCreate) -> User:
     """
-    Create a new user and stores it in the database.
+    # Create a new user and stores it in the database.
 
         Args:
             db (AsyncSession): The database session.
@@ -78,7 +78,7 @@ async def create_user(db: AsyncSession, user: UserCreate) -> User:
 
 async def authenticate_user(db: AsyncSession, username: str, password: str) -> Optional[User]:
     """
-    Authenticate a user by verifying the provided password.
+    # Authenticate a user by verifying the provided password.
 
         Args:
             db (AsyncSession): The database session.
@@ -95,7 +95,7 @@ async def authenticate_user(db: AsyncSession, username: str, password: str) -> O
     
 async def login_for_access_token(db: AsyncSession, username: str, password: str):
     """
-    Authenticates the user with the provided username and password and generates an access token for a user upon successful authentication.
+    # Authenticates the user with the provided username and password and generates an access token for a user upon successful authentication.
 
         Args:
             db (AsyncSession): The database session.
@@ -118,3 +118,48 @@ async def login_for_access_token(db: AsyncSession, username: str, password: str)
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
+async def update_user_by_username(db: AsyncSession, username: str, user_data: dict) -> User:
+    """
+    # Update a user by their username.
+
+        Args:
+            db (AsyncSession): The database session.
+            username (str): The username of the user to update.
+            user_data (dict): The updated user data.
+
+        Returns:
+            User: The updated user object.
+
+    """
+    ...
+    db_user = await get_user_by_username(db, username)
+    if not db_user:
+        return None
+
+    for key, value in user_data.items():
+        if user_data[key] != None:
+            setattr(db_user, key, value)
+
+    await db.commit()
+    await db.refresh(db_user)
+    return db_user
+
+async def delete_user_by_username(db: AsyncSession, username: str) -> User:
+    """
+    # Delete a user by their username.
+
+        Args:
+            db (AsyncSession): The database session.
+            username (str): The username of the user to delete.
+
+        Returns:
+            User: The deleted user object.
+
+    """
+    db_user = await get_user_by_username(db, username)
+    if not db_user:
+        return None
+
+    await db.delete(db_user)
+    await db.commit()
+    return db_user
