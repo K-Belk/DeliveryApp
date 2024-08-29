@@ -4,7 +4,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.database import async_session
+from src.database import async_session, get_db
 from src.auth.services import get_user_by_username
 from src.auth.schemas import UserResponse as User
 from src.auth.constants import SECRET_KEY, ALGORITHM
@@ -12,16 +12,6 @@ from src.auth.constants import SECRET_KEY, ALGORITHM
 
 # Defines a OAuth2PasswordBearer instance, specifying the tokenUrl as "token"
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
-async def get_db():
-    """
-    Asynchronous function that returns a database session.
-
-        Returns:
-            session: An async session object representing a database session.
-    """
-    async with async_session() as session:
-        yield session
 
 async def get_current_user(token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_db)) -> User:
     """

@@ -9,6 +9,29 @@ from datetime import timedelta
 from src.auth.constants import ACCESS_TOKEN_EXPIRE_MINUTES
 from typing import Optional
 
+async def create_user(db: AsyncSession, user: UserCreate) -> User:
+    """
+    # Create a new user and stores it in the database.
+
+        Args:
+            db (AsyncSession): The database session.
+            user (UserCreate): The user data.
+
+        Returns:
+            User: The created user.
+    """
+    new_user = User(
+        username=user.username,
+        email=user.email,
+        hashed_password=get_password_hash(user.password),
+        first_name=user.first_name,
+        last_name=user.last_name,
+    )
+    db.add(new_user)
+    await db.commit()
+    await db.refresh(new_user)
+    return new_user
+
 async def get_user_by_username(db: AsyncSession, username: str) -> Optional[User]:
     """
     Retrieves a user from the database by username.
@@ -52,29 +75,6 @@ async def get_all_users(db: AsyncSession) -> list[User]:
     
     result = await db.execute(select(User))
     return result.scalars().all()
-
-async def create_user(db: AsyncSession, user: UserCreate) -> User:
-    """
-    # Create a new user and stores it in the database.
-
-        Args:
-            db (AsyncSession): The database session.
-            user (UserCreate): The user data.
-
-        Returns:
-            User: The created user.
-    """
-    new_user = User(
-        username=user.username,
-        email=user.email,
-        hashed_password=get_password_hash(user.password),
-        first_name=user.first_name,
-        last_name=user.last_name,
-    )
-    db.add(new_user)
-    await db.commit()
-    await db.refresh(new_user)
-    return new_user
 
 async def authenticate_user(db: AsyncSession, username: str, password: str) -> Optional[User]:
     """
