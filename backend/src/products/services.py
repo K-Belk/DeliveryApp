@@ -3,9 +3,8 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from src.products.models import Product
-from src.products.schemas import ProductBase, ProductResponse
+from src.products.schemas import ProductBase
 from typing import Optional
-from datetime import timedelta
 
 
 async def create_new_product(db: AsyncSession, product: ProductBase) -> Product:
