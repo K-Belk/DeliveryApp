@@ -15,6 +15,18 @@ class ProductBase(BaseModel):
     """
     name: str
     description: str | None = None
-    edition: str | None = None
+    edition: str 
     image: HttpUrl | None = None
     notes: str | None = None
+
+class ProductResponse(ProductBase):
+    """
+    # Represents the response schema for a product.
+
+        Attributes:
+            id (int): The unique identifier of the product.
+    """
+    id: int
+
+    class Config:
+        from_attributes = True

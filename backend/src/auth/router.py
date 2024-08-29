@@ -120,27 +120,21 @@ async def update_user(
     db: AsyncSession = Depends(get_db),
     current_user: UserResponse = Depends(get_current_user),
 ):
-    async def update_user(
-        username: str,
-        user_data: UserResponse,
-        db: AsyncSession = Depends(get_db),
-        current_user: UserResponse = Depends(get_current_user),
-    ):
-        """
-        # Update a user's information.
+    """
+    # Update a user's information.
 
-            Args:
-                username (str): The username of the user to update.
-                user_data (UserResponse): The updated user data.
-                db (AsyncSession, optional): The database session. Defaults to Depends(get_db).
-                current_user (UserResponse, optional): The current authenticated user. Defaults to Depends(get_current_user).
+        Args:
+            username (str): The username of the user to update.
+            user_data (UserResponse): The updated user data.
+            db (AsyncSession, optional): The database session. Defaults to Depends(get_db).
+            current_user (UserResponse, optional): The current authenticated user. Defaults to Depends(get_current_user).
 
-            Returns:
-                UserResponse: The updated user data.
+        Returns:
+            UserResponse: The updated user data.
 
-            Raises:
-                HTTPException: If the user is not found.
-        """
+        Raises:
+            HTTPException: If the user is not found.
+    """
 
     user = await update_user_by_username(db, username, user_data.dict())
     if user is None:

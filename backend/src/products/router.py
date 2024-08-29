@@ -1,22 +1,29 @@
 # is a core of each module with all the endpoints
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from .schemas import ProductBase
+from .schemas import ProductBase, ProductResponse
+from .models import Product
 from src.database import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.products.services import (
-    create_product,
+    create_new_product,
     get_all_products,
     get_product_by_id,
     update_product_by_id,
     delete_product_by_id,
 )
+from src.products.dependencies import check_product_exist
+from typing import Optional
 
 router = APIRouter()
 
 
-@router.post("/products/", response_model=ProductBase)
-async def create_product(product: ProductBase, db: AsyncSession = Depends(get_db)):
+@router.post("/product/", response_model=ProductResponse)
+async def create_product(
+    product: ProductBase,
+    db: AsyncSession = Depends(get_db),
+    _: Optional[Product] = Depends(check_product_exist),
+):
     """
     # Create a new product.
 
@@ -27,9 +34,7 @@ async def create_product(product: ProductBase, db: AsyncSession = Depends(get_db
         Returns:
             The created product.
     """
-    db_product = await create_product(db, product)
-    if db_product is None:
-        raise HTTPException(status_code=400, detail="Product already exists")
+    db_product = await create_new_product(db, product)
     return db_product
 
 

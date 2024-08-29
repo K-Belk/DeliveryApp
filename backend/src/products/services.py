@@ -3,12 +3,12 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from src.products.models import Product
-from src.products.schemas import ProductBase
+from src.products.schemas import ProductBase, ProductResponse
 from typing import Optional
 from datetime import timedelta
 
 
-async def create_product(db: AsyncSession, product: ProductBase) -> Product:
+async def create_new_product(db: AsyncSession, product: ProductBase) -> Product:
     """
     # Create a new product and stores it in the database.
 
@@ -79,7 +79,7 @@ async def update_product_by_id(
             Product: The updated product.
     """
 
-    db_product = await db.execute(select(Product).filter(Product.id == product_id))
+    db_product = await get_product_by_id(db, product_id)
     if not db_product:
         return None
 
@@ -103,7 +103,7 @@ async def delete_product_by_id(db: AsyncSession, product_id: int) -> Optional[Pr
             Product: The deleted product.
     """
 
-    db_product = await db.execute(select(Product).filter(Product.id == product_id))
+    db_product = await get_product_by_id(db, product_id)
     if not db_product:
         return None
 
