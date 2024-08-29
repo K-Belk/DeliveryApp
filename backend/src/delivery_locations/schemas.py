@@ -45,10 +45,13 @@ class DeliveryLocationBaseOut(DeliveryLocationBaseIn):
             photo_url (HttpUrl, optional): The photo URL of the delivery location. Defaults to None.
     """
 
-    location_id: int
-    latitude: float
-    longitude: float
-    phone: str
+    id: int
+    latitude: float | None = None
+    longitude: float | None = None
+    phone: str | None = None
     hours: str | None = None
     url: HttpUrl | None = None
     photo_url: HttpUrl | None = None
+
+    class Config:
+        from_attributes = True
