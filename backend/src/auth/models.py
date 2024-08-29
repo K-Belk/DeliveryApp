@@ -30,7 +30,7 @@ class User(Base):
     hashed_password = Column(String, nullable=False)
     first_name = Column(String, index=True)
     last_name = Column(String, index=True)
-    is_active = Column(Boolean, default=False)
+    is_active = Column(Boolean, default=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 

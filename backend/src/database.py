@@ -18,3 +18,14 @@ async_session = sessionmaker(
 
 # `declarative_base` is a factory function that constructs a base class for declarative class definitions
 Base = declarative_base()
+
+
+async def get_db():
+    """
+    Asynchronous function that returns a database session.
+
+        Returns:
+            session: An async session object representing a database session.
+    """
+    async with async_session() as session:
+        yield session
