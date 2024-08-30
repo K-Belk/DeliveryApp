@@ -1,8 +1,9 @@
 # for db models
 
-from sqlalchemy import Boolean, Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.sql import func
 from src.database import Base
+from sqlalchemy.orm import relationship
 
 
 class Product(Base):
@@ -34,6 +35,9 @@ class Product(Base):
     notes = Column(String, nullable=True , index=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+    # Relationship to deliveries
+    deliveries = relationship("Delivery", back_populates="product")
 
     def __repr__(self):
         return f"<Product(id={self.id}, name={self.name}, edition={self.edition})>"

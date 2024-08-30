@@ -32,8 +32,11 @@ class Delivery(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     product_id = Column(Integer, ForeignKey("products.id"), nullable=False)
     location_id = Column(Integer, ForeignKey("delivery_locations.id"), nullable=False)
-    status = Column(String, nullable=False)
-    delivery_date = Column(DateTime(timezone=True), server_default=func.now())
+    quantity_scheduled = Column(Integer, nullable=False)
+    delivery_status = Column(String, nullable=False, default="scheduled")
+    quantity_delivered = Column(Integer)
+    delivery_date = Column(DateTime(timezone=True))
+    delivery_notes = Column(String)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
