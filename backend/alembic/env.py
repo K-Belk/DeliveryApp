@@ -22,6 +22,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 from src.auth.models import User  # noqa: E402, F401
 from src.delivery_locations.models import DeliveryLocation  # noqa: E402, F401
 from src.products.models import Product  # noqa: E402, F401
+from src.deliveries.models import Delivery # noqa: E402, F401
 from src.database import Base  # noqa: E402
 
 # This is the Alembic Config object, which provides access to the values within the .ini file in use.

@@ -22,16 +22,24 @@ class DeliveryBase(BaseModel):
             delivered_by (str, optional): The name of the person who delivered the product.
     """
 
-    quantity_scheduled: int
-    quantity_delivered: int | None = None
-    delivery_location_id: int
+    user_id: int | None = None
     product_id: int
-    quantity_scheduled: int  # this is the quantity that was scheduled to be delivered, determined by the past deliveries of the product type to the location
-    quantity_delivered: int | None = (
-        None  # this is the quantity that was actually delivered, will be updated by the delivery person
-    )
-    delivery_date: str | None = None
-    delivery_time: str | None = None
-    delivery_notes: str | None = Field(None, max_length=300)
+    location_id: int
+    quantity_scheduled: int
     delivery_status: str | None = None
-    delivered_by: str | None = None
+    quantity_delivered: int | None = None
+    delivery_date: str | None = None
+    delivery_notes: str | None = Field(None, max_length=300)
+
+class DeliveryResponse(DeliveryBase):
+    """
+    Represents the schema for returning delivery data from the API.
+
+        Attributes:
+            id (int): The ID of the delivery.
+    """
+
+    id: int
+
+    class Config:
+        from_attributes = True

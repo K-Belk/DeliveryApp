@@ -4,7 +4,7 @@
 from pydantic import BaseModel, HttpUrl
 
 
-class DeliveryLocationBaseIn(BaseModel):
+class DeliveryLocationBase(BaseModel):
     """
     Represents the base input schema for a delivery location.
 
@@ -31,7 +31,7 @@ class DeliveryLocationBaseIn(BaseModel):
     delivery_zone: str | None = None
 
 
-class DeliveryLocationBaseOut(DeliveryLocationBaseIn):
+class DeliveryLocationResponse(DeliveryLocationBase):
     """
     Represents the base output schema for a delivery location.
 

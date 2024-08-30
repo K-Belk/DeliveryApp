@@ -1,7 +1,7 @@
 # is a core of each module with all the endpoints
 
 from fastapi import APIRouter, status, Depends
-from .schemas import DeliveryLocationBaseIn, DeliveryLocationBaseOut
+from .schemas import DeliveryLocationBase, DeliveryLocationResponse
 from typing import Optional
 from src.database import AsyncSession, get_db
 from .services import (
@@ -17,9 +17,11 @@ from .models import DeliveryLocation
 router = APIRouter()
 
 
-@router.post("/delivery_location/", response_model=DeliveryLocationBaseOut)
+@router.post("/delivery_location/", response_model=DeliveryLocationResponse)
 async def create_delivery_location(
-    location: DeliveryLocationBaseIn, db: AsyncSession = Depends(get_db), _: Optional[DeliveryLocation] = Depends(check_location_exist)
+    location: DeliveryLocationBase,
+    db: AsyncSession = Depends(get_db),
+    _: Optional[DeliveryLocation] = Depends(check_location_exist),
 ):
     """
     # Create a new delivery location.
@@ -34,6 +36,7 @@ async def create_delivery_location(
     """
     return await create_new_delivery_location(db, location)
 
+
 @router.get("/delivery_locations/")
 async def get_delivery_locations(db: AsyncSession = Depends(get_db)):
     """
@@ -46,6 +49,7 @@ async def get_delivery_locations(db: AsyncSession = Depends(get_db)):
             - List[DeliveryLocation]: A list of delivery locations.
     """
     return await get_all_delivery_locations(db)
+
 
 @router.get("/delivery_location/{location_id}")
 async def get_delivery_location(location_id: int, db: AsyncSession = Depends(get_db)):
@@ -61,12 +65,13 @@ async def get_delivery_location(location_id: int, db: AsyncSession = Depends(get
     """
     return await get_delivery_location_by_id(db, location_id)
 
+
 @router.patch(
-    "/delivery_location/{location_id}", response_model=DeliveryLocationBaseOut
+    "/delivery_location/{location_id}", response_model=DeliveryLocationResponse
 )
 async def update_delivery_location(
     location_id: int,
-    location: DeliveryLocationBaseOut,
+    location: DeliveryLocationResponse,
     db: AsyncSession = Depends(get_db),
 ):
     """
@@ -74,7 +79,7 @@ async def update_delivery_location(
 
         Parameters:
             - location_id (int): The ID of the delivery location to update.
-            - location (DeliveryLocationBaseIn): The updated delivery location data.
+            - location (DeliveryLocationBase): The updated delivery location data.
             - db (AsyncSession): The database session.
 
         Returns:
