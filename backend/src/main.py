@@ -6,6 +6,8 @@ from src.delivery_locations.router import router as delivery_location_router
 from src.products.router import router as product_router
 from fastapi.security import OAuth2PasswordBearer
 
+from src.delivery_locations.utils import GoogleCalls
+
 app = FastAPI()
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -18,3 +20,9 @@ app.include_router(product_router)
 @app.get("/")
 async def read_root():
     return {"message": "Welcome to the Delivery API"}
+
+@app.get("/health")
+async def health_check():
+    return {"status": "ok"}
+
+

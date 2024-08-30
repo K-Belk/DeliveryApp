@@ -7,6 +7,7 @@ from sqlalchemy import select
 from .models import DeliveryLocation
 from .schemas import DeliveryLocationBase, DeliveryLocationResponse
 from src.database import get_db
+from .utils import GoogleCalls
 
 
 async def check_location_exist(
@@ -25,12 +26,13 @@ async def check_location_exist(
         Raises:
             HTTPException: Raises an exception with status code 400 if the delivery location already exists.
     """
+
+    place_id = GoogleCalls().get_place_id(
+        GoogleCalls().format_location_base(location.dict())
+    )
+
     result = await db.execute(
-        select(DeliveryLocation).filter(
-            DeliveryLocation.name == location.name,
-            DeliveryLocation.street == location.street,
-            DeliveryLocation.postal_code == location.postal_code,
-        )
+        select(DeliveryLocation).where(DeliveryLocation.place_id == place_id)
     )
     existing_location = result.scalars().first()
 

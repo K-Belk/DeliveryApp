@@ -8,6 +8,7 @@ from .schemas import (
     DeliveryLocationResponse,
 )
 from typing import Optional
+from .utils import GoogleCalls
 
 
 async def create_new_delivery_location(
@@ -23,9 +24,10 @@ async def create_new_delivery_location(
         Returns:
             DeliveryLocationResponse: The created delivery location.
     """
+    location_google = GoogleCalls().get_location_info(location.dict())
     new_location = DeliveryLocation()
 
-    for key, value in location.dict().items():
+    for key, value in location_google.dict().items():
         setattr(new_location, key, value)
 
     db.add(new_location)

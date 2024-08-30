@@ -1,13 +1,13 @@
 #  for pydantic models
 
 
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel, HttpUrl, validator
+from typing import Optional
 
 
 class DeliveryLocationBase(BaseModel):
     """
-    Represents the base input schema for a delivery location.
-
+    Represents the base schema for a delivery location.
         Attributes:
             name (str): The name of the delivery location.
             street (str): The street address of the delivery location.
@@ -16,9 +16,9 @@ class DeliveryLocationBase(BaseModel):
             state (str): The state of the delivery location.
             postal_code (int): The postal code of the delivery location.
             notes (str, optional): Additional notes about the delivery location. Defaults to None.
-            business_type (str, optional): The type of business at the delivery location. Defaults to None.
-            delivery_zone (str, optional): The delivery zone of the delivery location. Defaults to None.
+            delivery_zone (str, optional): The delivery zone of the location. Defaults to None.
     """
+    
 
     name: str
     street: str
@@ -27,31 +27,36 @@ class DeliveryLocationBase(BaseModel):
     state: str
     postal_code: int
     notes: str | None = None
-    business_type: str | None = None
     delivery_zone: str | None = None
 
 
 class DeliveryLocationResponse(DeliveryLocationBase):
     """
-    Represents the base output schema for a delivery location.
-
+    Represents a delivery location response.
         Attributes:
-            location_id (int): The ID of the delivery location.
-            latitude (float): The latitude of the delivery location.
-            longitude (float): The longitude of the delivery location.
-            phone (str): The phone number of the delivery location.
-            hours (str, optional): The hours of operation for the delivery location. Defaults to None.
-            url (HttpUrl, optional): The URL of the delivery location. Defaults to None.
-            photo_url (HttpUrl, optional): The photo URL of the delivery location. Defaults to None.
+            id (int | None): The ID of the delivery location.
+            place_id (str | None): The place ID of the delivery location.
+            latitude (float | None): The latitude of the delivery location.
+            longitude (float | None): The longitude of the delivery location.
+            business_type (str | None): The business type of the delivery location.
+            phone (str | None): The phone number of the delivery location.
+            hours (str | None): The hours of operation of the delivery location.
+            website (str | None): The website URL of the delivery location.
+            photo_url (str | None): The photo URL of the delivery location.
+        Config:
+            from_attributes (bool): Indicates whether to load attributes from the class attributes.
     """
+ 
 
-    id: int
+    id: int | None = None
+    place_id: str | None = None
     latitude: float | None = None
     longitude: float | None = None
+    business_type: str | None = None
     phone: str | None = None
     hours: str | None = None
-    url: HttpUrl | None = None
-    photo_url: HttpUrl | None = None
+    website: str | None = None
+    photo_url: str| None = None
 
     class Config:
         from_attributes = True
