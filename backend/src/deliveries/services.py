@@ -2,6 +2,7 @@
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from sqlalchemy.orm import joinedload
 from .models import Delivery
 from .schemas import DeliveryBase, DeliveryResponse
 from typing import Optional
@@ -39,7 +40,7 @@ async def get_all_deliveries(db: AsyncSession) -> Optional[DeliveryResponse]:
         Returns:
             DeliveryResponse: The delivery data.
     """
-    result = await db.execute(select(Delivery))
+    result = await db.execute(select(Delivery).options(joinedload(Delivery.user), joinedload(Delivery.product), joinedload(Delivery.location)))
     return result.scalars().all()
 
 
@@ -56,7 +57,7 @@ async def get_delivery_by_id(
         Returns:
             - Optional[DeliveryResponse] - The delivery response object if found, otherwise None.
     """
-    result = await db.execute(select(Delivery).filter(Delivery.id == delivery_id))
+    result = await db.execute(select(Delivery).options(joinedload(Delivery.user), joinedload(Delivery.product), joinedload(Delivery.location)).filter(Delivery.id == delivery_id))
     return result.scalars().first()
 
 
@@ -91,7 +92,7 @@ async def get_deliveries_by_location(
             - Optional[DeliveryResponse] - The delivery response object if found, otherwise None.
     """
     result = await db.execute(
-        select(Delivery).filter(Delivery.location_id == location_id)
+        select(Delivery).options(joinedload(Delivery.user), joinedload(Delivery.product), joinedload(Delivery.location)).filter(Delivery.location_id == location_id)
     )
     return result.scalars().all()
 
@@ -110,7 +111,7 @@ async def get_deliveries_by_product(
             - Optional[DeliveryResponse] - The delivery response object if found, otherwise None.
     """
     result = await db.execute(
-        select(Delivery).filter(Delivery.product_id == product_id)
+        select(Delivery).options(joinedload(Delivery.user), joinedload(Delivery.product), joinedload(Delivery.location)).filter(Delivery.product_id == product_id)
     )
     return result.scalars().all()
 
