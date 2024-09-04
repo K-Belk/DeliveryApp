@@ -9,31 +9,33 @@ import CustomButton from '../components/CustomButton';
 
 export default function App() {
   return (
-    <SafeAreaView className="bg-primary h-full">
-      <ScrollView contentContainerStyle={{ height: '100%' }}> 
-        <View className="w-full justify-center items-center min-h-[85vh] px-4">
-          <Image 
-          source={logo}
-          className="w-[300px] h-[200] "
-          resizeMode="contain"
-          tintColor={'white'}
-          />
+    <>
+      <SafeAreaView className="bg-primary h-full">
+        <ScrollView contentContainerStyle={{ height: '100%' }}> 
+          <View className="w-full justify-center items-center min-h-[85vh] px-4">
+            <Image 
+            source={logo}
+            className="w-[300px] h-[200] "
+            resizeMode="contain"
+            tintColor={'white'}
+            />
 
-          <CustomButton 
-          title='Login'
-          handlePress={() => router.push('/login')}
-          containerStyles='w-full mt-7 '
-          />
+            <CustomButton 
+            title='Login'
+            handlePress={() => router.push('/login')}
+            containerStyles='w-full mt-7 '
+            />
 
-          <CustomButton 
-          title='Create Account'
-          handlePress={() => router.push('/register')}
-          containerStyles='w-full mt-7 '
-          />
-        </View>
-      </ScrollView>
-    <StatusBar backgroundColor='#161622' style="light" />
-    </SafeAreaView>
+            <CustomButton 
+            title='Create Account'
+            handlePress={() => router.push('/register')}
+            containerStyles='w-full mt-7 '
+            />
+          </View>
+        </ScrollView>
+        </SafeAreaView>
+        <StatusBar style="light" />
+        </>
   );
 }
 
