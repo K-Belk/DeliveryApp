@@ -6,7 +6,7 @@ from src.auth.models import User
 from src.auth.utils import get_password_hash, verify_password, create_access_token
 from src.auth.schemas import UserCreate
 from datetime import timedelta
-from src.auth.constants import ACCESS_TOKEN_EXPIRE_MINUTES
+from src.auth.constants import ACCESS_TOKEN_EXPIRE_MINUTES, REFRESH_TOKEN_EXPIRE_DAYS
 from typing import Optional
 
 async def create_user(db: AsyncSession, user: UserCreate) -> User:
@@ -116,7 +116,13 @@ async def login_for_access_token(db: AsyncSession, username: str, password: str)
     access_token = create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+    refresh_token_expires = timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
+    refresh_token = create_access_token(
+        data={"sub": user.username}, expires_delta=refresh_token_expires
+    )
+
+
+    return {"access_token": access_token, "token_type": "bearer", "refresh_token": refresh_token}
 
 async def update_user_by_username(db: AsyncSession, username: str, user_data: dict) -> User:
     """

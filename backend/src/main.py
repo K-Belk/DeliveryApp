@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from src.auth.router import router as auth_router
 from src.deliveries.router import router as delivery_router
@@ -9,6 +10,14 @@ from fastapi.security import OAuth2PasswordBearer
 from src.delivery_locations.utils import GoogleCalls
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], # Allows all origins, modify this in production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 

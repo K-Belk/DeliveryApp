@@ -15,3 +15,6 @@ ALGORITHM = "HS256"
 
 # Define the access token expiration time in minutes
 ACCESS_TOKEN_EXPIRE_MINUTES = 30  # or any value that suits your application
+
+# Define the refresh token expiration time in days
+REFRESH_TOKEN_EXPIRE_DAYS = 7  # or any value that suits your application

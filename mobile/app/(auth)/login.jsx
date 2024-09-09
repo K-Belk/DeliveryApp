@@ -6,16 +6,18 @@ import FormField from '../../components/FormField';
 import { useState } from 'react';
 import CustomButton from '../../components/CustomButton';
 import {Link} from 'expo-router';
+import { loginPost }  from '../../api/authRoutes.js';
 
 const Login = () => {
 
-  const [from, setFrom] = useState({
+  const [form, setForm] = useState({
     username: '',
     password: ''
   })
 
   const handleLogin = () => {
-    console.log(from)
+    // console.log(form)
+    loginPost(form)
   }
 
   const [isSubmitting, setIsSubmitting ] = useState(false)
@@ -34,16 +36,16 @@ const Login = () => {
           <FormField 
           title='Username'
           placeholder='Enter your username'
-          value={from.username}
-          handleChangeText={(e) => setFrom({...from, username: e})}
+          value={form.username}
+          handleChangeText={(e) => setForm({...form, username: e})}
           otherStyles='mt-7'
           keyboardType='username'
           />
           <FormField 
           title='Password'
           placeholder='Enter your password'
-          value={from.password}
-          handleChangeText={(e) => setFrom({...from, password: e})}
+          value={form.password}
+          handleChangeText={(e) => setForm({...form, password: e})}
           otherStyles='mt-7'
           keyboardType='password'
           />

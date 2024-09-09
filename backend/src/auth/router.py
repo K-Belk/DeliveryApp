@@ -42,7 +42,7 @@ async def register(user: UserCreate, db: AsyncSession = Depends(get_db)):
     return db_user
 
 
-@router.post("/token/", response_model=Token)
+@router.post("/token", response_model=Token)
 async def login(
     form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_db)
 ):
@@ -67,10 +67,40 @@ async def login(
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
+    print(token)
     return token
 
 
-@router.get("/users/")
+@router.post("/refresh-token", response_model=Token)
+async def refresh_token(
+    token: str,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
+):
+    """
+    # Refresh the access token using the refresh token.
+
+        Parameters:
+        - refresh_token (str): The refresh token.
+        - db (AsyncSession): The database session.
+
+        Returns:
+        - str: The new access token.
+
+        Raises:
+        - HTTPException: If the refresh token is invalid.
+    """
+
+    token = await login_for_access_token(db, refresh_token)
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid refresh token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return token
+
+@router.get("/users")
 async def get_users(
     db: AsyncSession = Depends(get_db),
     current_user: UserResponse = Depends(get_current_user),
