@@ -2,6 +2,9 @@
 
 
 from pydantic import BaseModel, Field
+from src.auth.schemas import UserResponse
+from src.products.schemas import ProductResponse
+from src.delivery_locations.schemas import DeliveryLocationResponse
 
 # base class for deliveries, will be used to create pydantic model for deliveries during scheduling. Then later, the delivery person will update the delivery status and quantity delivered in the database
 
@@ -22,9 +25,9 @@ class DeliveryBase(BaseModel):
             delivered_by (str, optional): The name of the person who delivered the product.
     """
 
-    user_id: int | None = None
-    product_id: int
-    location_id: int
+    user_id: UserResponse | None = None
+    product_id: ProductResponse
+    location_id: DeliveryLocationResponse
     quantity_scheduled: int
     delivery_status: str | None = None
     quantity_delivered: int | None = None

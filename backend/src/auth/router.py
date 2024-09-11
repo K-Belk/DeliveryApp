@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from src.auth.schemas import UserCreate, UserResponse, Token
+from src.auth.schemas import UserCreate, UserResponse, Token, LoginResponse
 from src.auth.services import (
     create_user,
     login_for_access_token,
@@ -42,7 +42,7 @@ async def register(user: UserCreate, db: AsyncSession = Depends(get_db)):
     return db_user
 
 
-@router.post("/token/", response_model=Token)
+@router.post("/token", response_model=LoginResponse)
 async def login(
     form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_db)
 ):
@@ -60,17 +60,46 @@ async def login(
         - HTTPException: If the username or password is incorrect.
     """
 
-    token = await login_for_access_token(db, form_data.username, form_data.password)
-    if not token:
+    loginResponse = await login_for_access_token(db, form_data.username, form_data.password)
+    if not loginResponse.token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
+    return loginResponse
+
+
+@router.post("/refresh-token", response_model=Token)
+async def refresh_token(
+    token: str,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
+):
+    """
+    # Refresh the access token using the refresh token.
+
+        Parameters:
+        - refresh_token (str): The refresh token.
+        - db (AsyncSession): The database session.
+
+        Returns:
+        - str: The new access token.
+
+        Raises:
+        - HTTPException: If the refresh token is invalid.
+    """
+
+    token = await login_for_access_token(db, refresh_token)
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid refresh token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     return token
 
-
-@router.get("/users/")
+@router.get("/users")
 async def get_users(
     db: AsyncSession = Depends(get_db),
     current_user: UserResponse = Depends(get_current_user),
@@ -89,6 +118,14 @@ async def get_users(
 
     return result
 
+
+@router.get("/users/me", response_model=UserResponse)
+async def get_current_user_route(
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user)
+    ): 
+    
+    return current_user
 
 @router.get("/users/{username}", response_model=UserResponse)
 async def get_user(

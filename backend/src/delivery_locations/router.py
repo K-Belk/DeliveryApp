@@ -17,7 +17,7 @@ from .models import DeliveryLocation
 router = APIRouter()
 
 
-@router.post("/delivery_location/", response_model=DeliveryLocationResponse)
+@router.post("/delivery_location", response_model=DeliveryLocationResponse)
 async def create_delivery_location(
     location: DeliveryLocationBase,
     db: AsyncSession = Depends(get_db),
@@ -37,7 +37,7 @@ async def create_delivery_location(
     return await create_new_delivery_location(db, location)
 
 
-@router.get("/delivery_locations/")
+@router.get("/delivery_locations")
 async def get_delivery_locations(db: AsyncSession = Depends(get_db)):
     """
     # Get all delivery locations from the database.

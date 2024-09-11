@@ -17,7 +17,7 @@ from .services import (
 router = APIRouter()
 
 
-@router.post("/delivery/", response_model=DeliveryBase)
+@router.post("/delivery", response_model=DeliveryBase)
 async def create_delivery(delivery: DeliveryBase, db: AsyncSession = Depends(get_db)):
     """
     # Create a new delivery.
@@ -33,7 +33,7 @@ async def create_delivery(delivery: DeliveryBase, db: AsyncSession = Depends(get
     return await create_new_delivery(db, delivery)
 
 
-@router.get("/deliveries/", status_code=status.HTTP_200_OK)
+@router.get("/deliveries", status_code=status.HTTP_200_OK)
 async def get_deliveries(db: AsyncSession = Depends(get_db)):
     """
     # Get all deliveries from the database.

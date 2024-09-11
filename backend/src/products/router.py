@@ -18,7 +18,7 @@ from typing import Optional
 router = APIRouter()
 
 
-@router.post("/product/", response_model=ProductResponse)
+@router.post("/product", response_model=ProductResponse)
 async def create_product(
     product: ProductBase,
     db: AsyncSession = Depends(get_db),
@@ -38,7 +38,7 @@ async def create_product(
     return db_product
 
 
-@router.get("/products/")
+@router.get("/products")
 async def get_products(db: AsyncSession = Depends(get_db)):
     """
     # Get all products from the database.
