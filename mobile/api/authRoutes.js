@@ -1,4 +1,6 @@
 import {api} from './apiBase';
+import * as SecureStore from 'expo-secure-store';
+
 
 export const loginPost = async (data) => {
   try {
@@ -11,9 +13,10 @@ export const loginPost = async (data) => {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
     });
-    
-    SecureStore.setItemAsync('access_token', res.access_token);
-    SecureStore.setItemAsync('refresh_token', res.data.refresh_token);
+    SecureStore.setItemAsync('access_token', res.data.token.access_token);
+    SecureStore.setItemAsync('refresh_token', res.data.token.refresh_token);
+    // console.log(res.data)
+    return res.data
     } catch (error) {
     console.error(error);
   }
@@ -29,4 +32,25 @@ export const register = async (data) => {
     // Handle error (show error message)
   }
 
+}
+
+export const logout = async () => {
+  try {
+    await SecureStore.deleteItemAsync('access_token');
+    await SecureStore.deleteItemAsync('refresh_token');
+    return true;
+  } catch (error) {
+    console.error('Logout error:', error.response?.data || error.message);
+    return false;
+  }
+}
+
+export const getCurrentUser = async () => {
+  try {
+    const res = await api.get('/users/me');
+    return res.data;
+  } catch (error) {
+    console.error('Get user error:', error.response?.data || error.message);
+    throw error;
+  }
 }

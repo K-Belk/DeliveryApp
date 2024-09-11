@@ -1,14 +1,17 @@
-import { View, Text, ScrollView, Image } from 'react-native'
+import { View, Text, ScrollView, Image, Alert } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import logo from '../../assets/images/logo.png';
 import FormField from '../../components/FormField';
 import { useState } from 'react';
 import CustomButton from '../../components/CustomButton';
-import {Link} from 'expo-router';
+import {Link, router} from 'expo-router';
 import { loginPost }  from '../../api/authRoutes.js';
+import { useGlobalContext } from '../../context/GlobalProvider';
 
 const Login = () => {
+
+  const {setIsLoggedIn, isLoggedIn, setUser, user, isLoading, setIsLoading} = useGlobalContext();
 
   const [form, setForm] = useState({
     username: '',
@@ -16,11 +19,47 @@ const Login = () => {
   })
 
   const handleLogin = () => {
-    // console.log(form)
+    setIsLoading(true);
     loginPost(form)
+    .then(response => {
+      if(response) {
+        setIsLoggedIn(true);
+        setUser({
+        username: response.user.username,
+        email: response.user.email,
+        id: response.user.id,
+        firstName: response.user.first_name,
+        lastName: response.user.last_name,
+        
+      });
+
+      } else {
+        console.log('Login failed:', response);
+        setIsLoggedIn(false);
+        setUser({
+          username: '',
+          email: '',
+          id: '',
+          firstName: '',
+          lastName: '',
+        });
+      Alert.alert('Login failed', "Invalid username or password");
+      }
+    })
+    .catch(error => {
+      console.error('Login error:', error);
+      console.log('Login failed:', error.response?.data || error.message);
+      setIsLoggedIn(false);
+    })
+    .finally(() => {
+      setIsLoading(false);
+      console.log('User:', user);
+      console.log('IsLoggedIn:', isLoggedIn);
+      // redirect to home page
+      router.push('/home');
+    });
   }
 
-  const [isSubmitting, setIsSubmitting ] = useState(false)
 
   return (
     <SafeAreaView className="bg-primary h-full">
@@ -53,7 +92,7 @@ const Login = () => {
           title = 'Login'
           handlePress={handleLogin}
           containerStyles='mt-7'
-          isLoading={isSubmitting}
+          isLoading={isLoading}
           />
         </View>
         <View className="flex justify-center pt-5 flex-row gap-2">

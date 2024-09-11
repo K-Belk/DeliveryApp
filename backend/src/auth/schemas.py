@@ -61,3 +61,16 @@ class Token(BaseModel):
     access_token: str
     token_type: str
     refresh_token: str
+
+class LoginResponse(BaseModel):
+    """
+    Represents the schema for returning user data and JWT tokens after successful login.
+
+        Attributes:
+            user (UserResponse): The user data.
+            access_token (str): The access token.
+            token_type (str): The token type.
+    """
+
+    user: UserResponse
+    token: Token

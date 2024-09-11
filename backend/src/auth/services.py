@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from src.auth.models import User
 from src.auth.utils import get_password_hash, verify_password, create_access_token
-from src.auth.schemas import UserCreate
+from src.auth.schemas import UserCreate, LoginResponse
 from datetime import timedelta
 from src.auth.constants import ACCESS_TOKEN_EXPIRE_MINUTES, REFRESH_TOKEN_EXPIRE_DAYS
 from typing import Optional
@@ -120,9 +120,10 @@ async def login_for_access_token(db: AsyncSession, username: str, password: str)
     refresh_token = create_access_token(
         data={"sub": user.username}, expires_delta=refresh_token_expires
     )
+    
+    token_data = {"access_token": access_token, "token_type": "bearer", "refresh_token": refresh_token}
 
-
-    return {"access_token": access_token, "token_type": "bearer", "refresh_token": refresh_token}
+    return LoginResponse(user=user, token=token_data)
 
 async def update_user_by_username(db: AsyncSession, username: str, user_data: dict) -> User:
     """
